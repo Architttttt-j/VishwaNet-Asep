@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>loginPage</title>
+  <style>
+    body {
+      margin: 0; /* Remove default margins */
+      height: 100vh; /* Make body take full viewport height */
+      display: flex;
+      flex-direction: column; /* Stack elements vertically */
+      justify-content: center; /* Center elements vertically */
+      align-items: center; /* Center elements horizontally */
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                  url(pexels-felixmittermeier-956999.jpg) no-repeat center center/cover;
+
+      
+
+                   
+    }
+
+    .typing {
+      font-size: 2rem;
+      border-right: 2px solid white;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0; /* Start with hidden text */
+      animation: typing 4s steps(30, end) forwards, blink 0.5s;
+      color: rgb(207, 222, 227);
+      font-family: Bellefair, sans-serif;
+    }
+
+    @keyframes typing {
+      from {
+        width: 0;
+      }
+      to {
+        width: 400px; /* Adjust to match the length of your text */
+      }
+    }
+
+    @keyframes blink {
+      from, to {
+        border-color: transparent;
+      }
+      50% {
+        border-color: white;
+      }
+    }
+
+    h1, h3 {
+      margin: 0;
+    }
+
+    .button-container {
+      margin-top: 20px; /* Space between text and button */
+    }
+
+    .button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      font-family: Arial, sans-serif;
+      background-color: rgb(60, 179, 113); /* Green button */
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      transition: transform 0.3s;
+    }
+
+    .button:hover {
+      background-color: rgb(50, 150, 100); /* Darker green on hover */
+      transform: scale(1.2);
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="typing">
+    <h3>Welcome to</h3>
+    <h1>VISHWANET</h1>
+  </div>
+  <div class="button-container">
+    <a href="login.html" class="button" style="text-decoration: none;">Get Started</a>
+  </div>
+</body>
+</html>
