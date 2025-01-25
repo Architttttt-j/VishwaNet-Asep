@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+    <div class="profile-card">
+        <div class="profile-picture">
+            <img id="profileImage" src="https://via.placeholder.com/120" alt="Profile Picture">
+            <label for="imageUpload"></label>
+            <input type="file" id="imageUpload" accept="image/*">
+        </div>
+        <div class="profile-info">
+            <input type="text" id="name" placeholder="Your Name">
+            <input type="email" id="email" placeholder="Your Email">
+            <textarea id="bio" rows="3" placeholder="Write something about yourself.."></textarea>
+            <input type="text" id="college" placeholder="College Name">
+            <input type="text" id="department" placeholder="Department">
+            <input type="text" id="hobbies" placeholder="Hobbies (comma-separated)">
+            <input type="text" id="clubs" placeholder="Clubs (comma-separated)">
+            <input type="text" id="year" placeholder="Year of Study">
+            <input type="date" id="birthdate" placeholder="Birthdate">
+            <button id="saveButton">Save</button>
+            <button id="cancelButton" class="cancel">Cancel</button>
+        </div>
+    </div>
+    <script src="profile.js"></script>
+</body>
+</html>
+

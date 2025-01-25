@@ -1,9 +1,117 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Dashboard</title>
-    </head>
-    <body>
-        <p>wssup nigger</p>
-    </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>loginPage</title>
+  <style>
+    body {
+      margin: 0; /* Remove default margins */
+      height: 100vh; /* Make body take full viewport height */
+      display: flex;
+      flex-direction: column; /* Stack elements vertically */
+      justify-content: center; /* Center elements vertically */
+      align-items: center; /* Center elements horizontally */
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                  url(pexels-felixmittermeier-956999.jpg) no-repeat center center/cover;
+
+      
+
+                   
+    }
+    header {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      width: 100%;
+      padding: 10px 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    header .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-left: 20px;
+    }
+
+    nav {
+      margin-right: 20px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+
+    }
+
+    nav a:hover {
+      color: rgb(60, 179, 113);
+    }
+
+
+    .typing {
+      font-size: 2rem;
+      border-right: 2px solid white;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0; /* Start with hidden text */
+      animation: typing 4s steps(30, end) forwards, blink 0.5s;
+      color: rgb(234, 239, 239);
+      font-family: Bellefair, sans-serif;
+    }
+
+    @keyframes typing {
+      from {
+        width: 0;
+      }
+      to {
+        width: 400px; /* Adjust to match the length of your text */
+      }
+    }
+
+    @keyframes blink {
+      from, to {
+        border-color: transparent;
+      }
+      50% {
+        border-color: white;
+      }
+    }
+
+    h1, h3 {
+      margin: 0;
+    }
+
+   
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">VISHWANET</div>
+    <nav>
+      <a href="">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="">Group</a>
+      <a href="">Chat</a>
+      <a href="">Search</a>
+    </nav>
+  </header>
+  <div class="typing">
+    <h3>Welcome to</h3>
+    <h1>VISHWANET</h1>
+  </div>
+</body>
 </html>
