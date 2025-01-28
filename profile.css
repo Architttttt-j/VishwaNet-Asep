@@ -1,6 +1,6 @@
 body {
     font-family: 'Poppins', sans-serif;
-    background: #f9f9fb;
+    background: #36454F;
     color: #333;
     margin: 0;
     padding: 0;
@@ -12,8 +12,8 @@ body {
 
 .profile-card {
     display: flex;
-    background: #010343;
-    color: #5369b3;
+    background: #728FCE;
+    color: white;
     border-radius: 12px;
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
     padding: 24px;
