@@ -1,77 +1,211 @@
- // profile.js
+// Initialize Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyAoqXw_XofcwooxRuKoYbMBjcRVh-R666o",
+    authDomain: "vishwanet-2e88a.firebaseapp.com",
+    projectId: "vishwanet-2e88a",
+    storageBucket: "vishwanet-2e88a.appspot.com",
+    messagingSenderId: "774657347904",
+    appId: "1:774657347904:web:5c612c5a5904a483c5c9ca"
+};
 
-document.addEventListener("DOMContentLoaded", () => {
-    const imageUpload = document.getElementById("imageUpload");
-    const profileImage = document.getElementById("profileImage");
-    const nameInput = document.getElementById("name");
-    const emailInput = document.getElementById("email");
-    const bioInput = document.getElementById("bio");
-    const collegeInput = document.getElementById("college");
-    const departmentInput = document.getElementById("department");
-    const hobbiesInput = document.getElementById("hobbies");
-    const clubsInput = document.getElementById("clubs");
-    const yearInput = document.getElementById("year");
-    const birthdateInput = document.getElementById("birthdate");
-    const saveButton = document.getElementById("saveButton");
-    const cancelButton = document.getElementById("cancelButton");
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
-    // Load data from localStorage
-    function loadProfile() {
-        const profileData = JSON.parse(localStorage.getItem("profileData"));
-        if (profileData) {
-            if (profileData.image) profileImage.src = profileData.image;
-            if (profileData.name) nameInput.value = profileData.name;
-            if (profileData.email) emailInput.value = profileData.email;
-            if (profileData.bio) bioInput.value = profileData.bio;
-            if (profileData.college) collegeInput.value = profileData.college;
-            if (profileData.department) departmentInput.value = profileData.department;
-            if (profileData.hobbies) hobbiesInput.value = profileData.hobbies;
-            if (profileData.clubs) clubsInput.value = profileData.clubs;
-            if (profileData.year) yearInput.value = profileData.year;
-            if (profileData.birthdate) birthdateInput.value = profileData.birthdate;
-        }
+// Initialize Firebase services
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+// DOM Elements
+const profileForm = document.getElementById('profileForm');
+const imageInput = document.getElementById('imageInput');
+const profileImage = document.getElementById('profileImage');
+const addClubBtn = document.getElementById('addClub');
+const clubsList = document.getElementById('clubsList');
+
+// Check authentication state
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        document.getElementById('userEmail').textContent = user.email;
+        loadProfileData(user.uid);
+        loadProfileImage(user.uid);
+    } else {
+        window.location.href = 'login.html';
     }
-
-    // Save data to localStorage
-    function saveProfile() {
-        const profileData = {
-            image: profileImage.src,
-            name: nameInput.value,
-            email: emailInput.value,
-            bio: bioInput.value,
-            college: collegeInput.value,
-            department: departmentInput.value,
-            hobbies: hobbiesInput.value,
-            clubs: clubsInput.value,
-            year: yearInput.value,
-            birthdate: birthdateInput.value,
-        };
-        localStorage.setItem("profileData", JSON.stringify(profileData));
-        alert("Profile saved successfully!");
-    }
-
-    // Handle image upload
-    imageUpload.addEventListener("change", (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                profileImage.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Save button handler
-    saveButton.addEventListener("click", saveProfile);
-
-    // Cancel button handler
-    cancelButton.addEventListener("click", () => {
-        if (confirm("Are you sure you want to discard your changes?")) {
-            loadProfile();
-        }
-    });
-
-    // Load the profile data on page load
-    loadProfile();
 });
+
+// Load profile data from Firestore
+async function loadProfileData(userId) {
+    try {
+        const doc = await db.collection('users').doc(userId).get();
+        if (doc.exists) {
+            const data = doc.data();
+            document.getElementById('fullName').value = data.fullName || '';
+            document.getElementById('userName').textContent = data.fullName || 'Your Name';
+            document.getElementById('college').value = data.college || '';
+            document.getElementById('branch').value = data.branch || '';
+            document.getElementById('year').value = data.year || '';
+            document.getElementById('bio').value = data.bio || '';
+
+            if (data.clubs && data.clubs.length > 0) {
+                clubsList.innerHTML = '';
+                data.clubs.forEach(club => addClubInput(club));
+            }
+        }
+    } catch (error) {
+        console.error("Error loading profile:", error);
+        alert('Error loading profile data');
+    }
+}
+
+// Load profile image from Storage
+async function loadProfileImage(userId) {
+    try {
+        const url = await storage.ref(`profile-images/${userId}/profile.jpg`).getDownloadURL();
+        profileImage.src = url;
+    } catch (error) {
+        console.log('No profile image found, using default');
+        profileImage.src = 'tag.png';
+    }
+}
+
+// Handle profile image upload
+imageInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file');
+        return;
+    }
+
+    // Check file size (limit to 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('Please upload an image smaller than 5MB');
+        return;
+    }
+
+    const user = auth.currentUser;
+    if (!user) {
+        alert('Please login first');
+        return;
+    }
+
+    try {
+        // Show loading state
+        profileImage.style.opacity = '0.5';
+        
+        // Create a unique filename
+        const timestamp = Date.now();
+        const fileName = `profile.jpg`;
+        
+        // Create storage reference
+        const storageRef = storage.ref(`profile-images/${user.uid}/${fileName}`);
+        
+        // Create file metadata including the content type
+        const metadata = {
+            contentType: file.type,
+        };
+
+        // Upload the file and metadata
+        const uploadTask = storageRef.put(file, metadata);
+
+        // Listen for upload progress
+        uploadTask.on('state_changed', 
+            (snapshot) => {
+                // Handle progress
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+            }, 
+            (error) => {
+                // Handle unsuccessful uploads
+                console.error("Error uploading image:", error);
+                alert('Error uploading image: ' + error.message);
+                profileImage.style.opacity = '1';
+            }, 
+            async () => {
+                // Handle successful upload
+                try {
+                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                    
+                    // Update profile image in UI
+                    profileImage.src = downloadURL;
+                    profileImage.style.opacity = '1';
+                    
+                    // Store the image URL in Firestore
+                    await db.collection('users').doc(user.uid).update({
+                        profileImageUrl: downloadURL,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    console.log('Profile image updated successfully');
+                } catch (error) {
+                    console.error("Error getting download URL:", error);
+                    alert('Error updating profile image');
+                    profileImage.style.opacity = '1';
+                }
+            }
+        );
+
+    } catch (error) {
+        console.error("Error handling upload:", error);
+        alert('Error uploading image: ' + error.message);
+        profileImage.style.opacity = '1';
+    }
+});
+
+// Add new club input field
+function addClubInput(value = '') {
+    const div = document.createElement('div');
+    div.className = 'club-input';
+    div.innerHTML = `
+        <input type="text" class="club-name" value="${value}" placeholder="Enter club name">
+        <button type="button" class="remove-club">×</button>
+    `;
+    
+    div.querySelector('.remove-club').addEventListener('click', () => {
+        div.remove();
+    });
+    
+    clubsList.appendChild(div);
+}
+
+// Add club button click handler
+addClubBtn.addEventListener('click', () => {
+    addClubInput();
+});
+
+// Handle form submission
+profileForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const clubs = Array.from(document.querySelectorAll('.club-name'))
+        .map(input => input.value.trim())
+        .filter(value => value !== '');
+
+    const profileData = {
+        fullName: document.getElementById('fullName').value,
+        college: document.getElementById('college').value,
+        branch: document.getElementById('branch').value,
+        year: document.getElementById('year').value,
+        bio: document.getElementById('bio').value,
+        clubs: clubs,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+        await db.collection('users').doc(user.uid).set(profileData, { merge: true });
+        document.getElementById('userName').textContent = profileData.fullName;
+        alert('Profile updated successfully!');
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        alert('Error updating profile');
+    }
+});
+
+// Initialize with one empty club input
+addClubInput();
